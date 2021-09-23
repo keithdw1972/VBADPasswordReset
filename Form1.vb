@@ -1,21 +1,9 @@
 ﻿Public Class Form1
-    Private Sub Label1_Click(sender As Object, e As EventArgs) Handles lblOldPassword.Click
-
-    End Sub
-
-    Private Sub Label1_Click_1(sender As Object, e As EventArgs) Handles lblUsername.Click
-
-    End Sub
-
-    Private Sub TextBox2_TextChanged(sender As Object, e As EventArgs) Handles txtNewPassword1.TextChanged
-
-    End Sub
-
     Private Sub BtnResetPassword_Click(sender As Object, e As EventArgs) Handles btnResetPassword.Click
-        lblError.Visible = False
-        lblSuccess.Visible = False
-        lblPasswdError.Visible = False
-        lblCatch.Visible = False
+        'lblDomainName.Visible = False
+        'lblNetBiosName.Visible = False
+        'lblPasswdError.Visible = False
+        'lblCatch.Visible = False
         'Dim defaultNamingContext As String
 
         If txtUsername.Text = "" Then
@@ -35,114 +23,54 @@
             Exit Sub
         ElseIf txtNewPassword1.Text <> txtNewPassword2.Text Then
             MsgBox("Passwords must match, please try again.", MsgBoxStyle.Critical, "Error")
-            lblPasswdError.Visible = True
+            'lblPasswdError.Visible = True
             Exit Sub
         End If
 
+        Dim username As String = txtUsername.Text
+        Dim oldpassword As String = txtOldPassword.Text
+        Dim newpassword1 As String = txtNewPassword1.Text
+        Dim newpassword2 As String = txtNewPassword2.Text
+        Dim objNETBiosName As String = Nothing
+
         Using RootDSE As New DirectoryServices.DirectoryEntry("LDAP://RootDSE")
-            Dim DomainDN As String = RootDSE.Properties("DefaultNamingContext").Value
-            Dim parts = New System.DirectoryServices.DirectoryEntry("LDAP://CN=Partitions,CN=Configuration," & DomainDN)
-            Dim NTBIOSName As String = Nothing
+            Dim objDomainName As String = RootDSE.Properties("DefaultNamingContext").Value
+            Dim parts = New DirectoryServices.DirectoryEntry("LDAP://CN=Partitions,CN=Configuration," & objDomainName)
+            Dim objUserPath = New DirectoryServices.DirectoryEntry("LDAP://OU=UK-GLW-GLASGOW,OU=UK,OU=Employees," & objDomainName)
+            MsgBox(objDomainName)
+
             For Each part In parts.Children
-                If part.Properties("nCName")(0) = DomainDN Then
-                    'MsgBox(part.Properties("nETBIOSName")(0))
-                    NTBIOSName = part.Properties("nETBIOSName")(0)
-                    MsgBox(NTBIOSName)
+                If part.Properties("nCName")(0) = objDomainName Then
+                    objNETBiosName = part.Properties("nETBIOSName")(0)
+                    MsgBox(objNETBiosName)
                     Exit For
                 End If
             Next
-            Dim oldpassword As String = txtOldPassword.Text
-            Dim username As String = txtUsername.Text
-            MsgBox(DomainDN)
-            'Dim ADEntry As New System.DirectoryServices.DirectoryEntry("LDAP://" & DomainDN)
-            'Dim ADSearch As New System.DirectoryServices.DirectorySearcher(ADEntry)
-            'Dim ADSearchResult As System.DirectoryServices.SearchResult
-            '
-            'ADSearch.Filter = "(samAccountName=" & Security.Principal.WindowsIdentity.GetCurrent.Name.Split("\"c)(1) & ")"
-            'ADSearch.SearchScope = SearchScope.Subtree
 
-            'ADSearchResult = ADSearch.FindOne()
-            MsgBox($"{NTBIOSName}\{username}")
-            Dim ADEntry As New System.DirectoryServices.DirectoryEntry("LDAP://OU=Test," & DomainDN,
-                                                                       NTBIOSName & "\" & username, oldpassword)
+            Dim objUserSearch As New DirectoryServices.DirectorySearcher(objUserPath)
+            objUserSearch.SearchScope = DirectoryServices.SearchScope.Subtree
+            objUserSearch.Filter = "(SAMAccountName=" & username & ")"
+            Dim objUserSearchResult As DirectoryServices.SearchResult = objUserSearch.FindOne()
 
-            Try
-                MsgBox("Try!")
-                Dim ADSearch As DirectoryServices.DirectorySearcher = New DirectoryServices.DirectorySearcher(ADEntry)
-                ADSearch.SearchScope = DirectoryServices.SearchScope.Subtree
-                ADSearch.Filter = "(SAMAccountName=" & username & ")"
-                Dim ADSearchResult As DirectoryServices.SearchResult = ADSearch.FindOne()
-
-                MsgBox(ADSearchResult)
-                    Dim check As String = CType(ADSearchResult.Properties("SAMAccountName")(0), String)
-                    If check = Nothing Then MsgBox("Check is nothing!")
-                    If check <> Nothing Then
-                        MsgBox("Check is not nothing!")
-                        If check = username Then
-                            MsgBox("Check is username!" & check & username)
-                            Dim newpassword1 As String = txtNewPassword1.Text
-                            Dim newpassword2 As String = txtNewPassword2.Text
-                            If newpassword1 = newpassword2 Then
-                                MsgBox("Usernames match!" & oldpassword & newpassword1 & newpassword2)
-                                ADEntry = ADSearchResult.GetDirectoryEntry()
-                                ADEntry.Username = NTBIOSName & "\" & check
-                                MsgBox(ADEntry.Username)
-                                ADEntry.Password = oldpassword
-                                ADEntry.AuthenticationType = DirectoryServices.AuthenticationTypes.Secure
-                                ADEntry.Options.Referral = DirectoryServices.ReferralChasingOption.All
-                                ADEntry.Invoke("ChangePassword", oldpassword, newpassword1)
-                                ADEntry.CommitChanges()
-                                lblSuccess.Visible = "Password Changed."
-                            Else
-                                lblPasswdError.Visible = True
-                            End If
-                        Else
-                            lblError.Visible = True
-                        End If
-                    Else
-                        lblError.Visible = True
-                    End If
+            Dim objCheck As String = CType(objUserSearchResult.Properties("SAMAccountName")(0), String)
+            If objCheck <> Nothing Then
+                If objCheck = username Then 'MsgBox("Check equals username!")
+                    objUserPath = objUserSearchResult.GetDirectoryEntry()
+                    objUserPath.Username = objNETBiosName & "\" & objCheck
+                    MsgBox(objUserPath.Username)
+                    objUserPath.Password = oldpassword
+                    objUserPath.AuthenticationType = DirectoryServices.AuthenticationTypes.Secure
+                    objUserPath.Options.Referral = DirectoryServices.ReferralChasingOption.All
+                    objUserPath.Invoke("ChangePassword", oldpassword, newpassword1)
+                    objUserPath.CommitChanges()
+                End If
+            End If
 
 
-                'If Not IsNothing(ADSearchResult) Then
-                'MsgBox("Hello!")
-                'MsgBox(DomainDN)
-                'MsgBox(username)
-                'MsgBox(oldpassword)
-                'MsgBox(newpassword1)
-
-                'Dim myUser As System.DirectoryServices.DirectoryEntry = New System.DirectoryServices.DirectoryEntry()
-                'myUser.Path = ADSearchResult.GetDirectoryEntry().Path
-                'myUser.AuthenticationType = System.DirectoryServices.AuthenticationTypes.Secure
-                'Dim ret As Object = myUser.Invoke("ChangePassword", oldpassword, newpassword1)
-                'myUser.CommitChanges()
-                'myUser.Close()
-
-                'newpassword1 = True
-
-                MsgBox("Password Changed.", MsgBoxStyle.Information, "Password Changed")
-
-                Me.Close()
-                'End If
-                'End Using
-            Catch ex As Exception
-                MsgBox("Fails 3!")
-                lblCatch.Text = "Error message: " + ex.InnerException.Message
-                lblCatch.Visible = True
-            End Try
         End Using
-    End Sub
 
 
-    Private Sub TextBox1_TextChanged(sender As Object, e As EventArgs) Handles txtOldPassword.TextChanged
 
-    End Sub
-
-    Private Sub Label1_Click_2(sender As Object, e As EventArgs) Handles Label1.Click
-
-    End Sub
-
-    Private Sub TextBox1_TextChanged_1(sender As Object, e As EventArgs) Handles txtNewPassword2.TextChanged
 
     End Sub
 End Class

@@ -1,9 +1,9 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class Form1
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,7 +20,7 @@ Partial Class Form1
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.lblOldPassword = New System.Windows.Forms.Label()
         Me.lblNewPassword = New System.Windows.Forms.Label()
@@ -31,10 +31,6 @@ Partial Class Form1
         Me.txtUsername = New System.Windows.Forms.TextBox()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.txtNewPassword2 = New System.Windows.Forms.TextBox()
-        Me.lblError = New System.Windows.Forms.Label()
-        Me.lblSuccess = New System.Windows.Forms.Label()
-        Me.lblPasswdError = New System.Windows.Forms.Label()
-        Me.lblCatch = New System.Windows.Forms.Label()
         Me.SuspendLayout()
         '
         'lblOldPassword
@@ -120,51 +116,11 @@ Partial Class Form1
         Me.txtNewPassword2.TabIndex = 4
         Me.txtNewPassword2.UseSystemPasswordChar = True
         '
-        'lblError
-        '
-        Me.lblError.AutoSize = True
-        Me.lblError.Location = New System.Drawing.Point(255, 30)
-        Me.lblError.Name = "lblError"
-        Me.lblError.Size = New System.Drawing.Size(39, 13)
-        Me.lblError.TabIndex = 10
-        Me.lblError.Text = "Label2"
-        '
-        'lblSuccess
-        '
-        Me.lblSuccess.AutoSize = True
-        Me.lblSuccess.Location = New System.Drawing.Point(255, 56)
-        Me.lblSuccess.Name = "lblSuccess"
-        Me.lblSuccess.Size = New System.Drawing.Size(39, 13)
-        Me.lblSuccess.TabIndex = 11
-        Me.lblSuccess.Text = "Label3"
-        '
-        'lblPasswdError
-        '
-        Me.lblPasswdError.AutoSize = True
-        Me.lblPasswdError.Location = New System.Drawing.Point(255, 81)
-        Me.lblPasswdError.Name = "lblPasswdError"
-        Me.lblPasswdError.Size = New System.Drawing.Size(39, 13)
-        Me.lblPasswdError.TabIndex = 12
-        Me.lblPasswdError.Text = "Label4"
-        '
-        'lblCatch
-        '
-        Me.lblCatch.AutoSize = True
-        Me.lblCatch.Location = New System.Drawing.Point(255, 108)
-        Me.lblCatch.Name = "lblCatch"
-        Me.lblCatch.Size = New System.Drawing.Size(39, 13)
-        Me.lblCatch.TabIndex = 13
-        Me.lblCatch.Text = "Label5"
-        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1050, 173)
-        Me.Controls.Add(Me.lblCatch)
-        Me.Controls.Add(Me.lblPasswdError)
-        Me.Controls.Add(Me.lblSuccess)
-        Me.Controls.Add(Me.lblError)
         Me.Controls.Add(Me.txtNewPassword2)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.txtUsername)
@@ -190,8 +146,4 @@ Partial Class Form1
     Friend WithEvents txtUsername As TextBox
     Friend WithEvents Label1 As Label
     Friend WithEvents txtNewPassword2 As TextBox
-    Friend WithEvents lblSuccess As Label
-    Friend WithEvents lblPasswdError As Label
-    Friend WithEvents lblCatch As Label
-    Friend WithEvents lblError As Label
 End Class
