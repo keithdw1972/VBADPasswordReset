@@ -62,48 +62,47 @@
             'ADSearch.SearchScope = SearchScope.Subtree
 
             'ADSearchResult = ADSearch.FindOne()
-            MsgBox($"{NTBIOSName}\{username}", oldpassword)
+            MsgBox($"{NTBIOSName}\{username}")
             Dim ADEntry As New System.DirectoryServices.DirectoryEntry("LDAP://OU=Test," & DomainDN,
                                                                        NTBIOSName & "\" & username, oldpassword)
 
             Try
                 MsgBox("Try!")
-                Dim ADSearch As New System.DirectoryServices.DirectorySearcher(ADEntry) With {
-                    .SearchScope = DirectoryServices.SearchScope.Subtree,
-                    .Filter = "(SAMAccountName=" & username & ")"
-                }
-                Dim ADSearchResult As System.DirectoryServices.SearchResult
-                Dim searchResult As DirectoryServices.SearchResult = ADSearch.FindOne()
-                ADSearchResult = searchResult
+                Dim ADSearch As DirectoryServices.DirectorySearcher = New DirectoryServices.DirectorySearcher(ADEntry)
+                ADSearch.SearchScope = DirectoryServices.SearchScope.Subtree
+                ADSearch.Filter = "(SAMAccountName=" & username & ")"
+                Dim ADSearchResult As DirectoryServices.SearchResult = ADSearch.FindOne()
 
-                Dim check As String = CType(ADSearchResult.Properties("SAMAccountName")(0), String)
-                If check = Nothing Then MsgBox("Check is nothing!")
-                If check <> Nothing Then
-                    MsgBox("Check is not nothing!")
-                    If check = username Then
-                        MsgBox("Check is username!" & check & username)
-                        Dim newpassword1 As String = txtNewPassword1.Text
-                        Dim newpassword2 As String = txtNewPassword2.Text
-                        If newpassword1 = newpassword2 Then
-                            MsgBox("Usernames match!" & oldpassword & newpassword1 & newpassword2)
-                            ADEntry = ADSearchResult.GetDirectoryEntry()
-                            ADEntry.Username = NTBIOSName & "\" & check
-                            MsgBox(ADEntry.Username)
-                            ADEntry.Password = oldpassword
-                            ADEntry.AuthenticationType = DirectoryServices.AuthenticationTypes.Secure
-                            ADEntry.Options.Referral = DirectoryServices.ReferralChasingOption.All
-                            ADEntry.Invoke("ChangePassword", oldpassword, newpassword1)
-                            ADEntry.CommitChanges()
-                            lblSuccess.Visible = "Password Changed."
+                MsgBox(ADSearchResult)
+                    Dim check As String = CType(ADSearchResult.Properties("SAMAccountName")(0), String)
+                    If check = Nothing Then MsgBox("Check is nothing!")
+                    If check <> Nothing Then
+                        MsgBox("Check is not nothing!")
+                        If check = username Then
+                            MsgBox("Check is username!" & check & username)
+                            Dim newpassword1 As String = txtNewPassword1.Text
+                            Dim newpassword2 As String = txtNewPassword2.Text
+                            If newpassword1 = newpassword2 Then
+                                MsgBox("Usernames match!" & oldpassword & newpassword1 & newpassword2)
+                                ADEntry = ADSearchResult.GetDirectoryEntry()
+                                ADEntry.Username = NTBIOSName & "\" & check
+                                MsgBox(ADEntry.Username)
+                                ADEntry.Password = oldpassword
+                                ADEntry.AuthenticationType = DirectoryServices.AuthenticationTypes.Secure
+                                ADEntry.Options.Referral = DirectoryServices.ReferralChasingOption.All
+                                ADEntry.Invoke("ChangePassword", oldpassword, newpassword1)
+                                ADEntry.CommitChanges()
+                                lblSuccess.Visible = "Password Changed."
+                            Else
+                                lblPasswdError.Visible = True
+                            End If
                         Else
-                            lblPasswdError.Visible = True
+                            lblError.Visible = True
                         End If
                     Else
                         lblError.Visible = True
                     End If
-                Else
-                    lblError.Visible = True
-                End If
+
 
                 'If Not IsNothing(ADSearchResult) Then
                 'MsgBox("Hello!")
